@@ -1,0 +1,37 @@
+import React from 'react';
+import { useSearchParams } from 'react-router-dom';
+import NoteList from '../components/NoteList';
+import SearchBar from '../components/SearchBar';
+import { getArchivedNotes } from '../utils/local-data';
+
+function ArchivePage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const notes = getArchivedNotes();
+
+  const title = searchParams.get('title') || '';
+
+  function onSearchHandler(keyword) {
+    setSearchParams({ title: keyword });
+  }
+
+  const filteredNotes = notes.filter((note) => {
+    return note.title.toLowerCase().includes(title.toLowerCase());
+  });
+
+  return (
+    <section className="archives-page">
+      <h2>Catatan Arsip</h2>
+      <SearchBar keyword={title} keywordChange={onSearchHandler} />
+      
+      {filteredNotes.length > 0 ? (
+        <NoteList notes={filteredNotes} />
+      ) : (
+        <section className="notes-list-empty">
+          <p className="notes-list-empty">Tidak ada catatan.</p>
+        </section>
+      )}
+    </section>
+  );
+}
+
+export default ArchivePage;
